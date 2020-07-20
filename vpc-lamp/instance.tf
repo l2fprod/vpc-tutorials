@@ -86,7 +86,7 @@ resource "ibm_is_subnet" "sub" {
 }
 
 resource "ibm_is_volume" "vsi_data_volume" {
-  count          = var.byok_data_volume == true ? 1 : 0
+  count          = tobool(var.byok_data_volume) == true ? 1 : 0
   name           = "${var.resources_prefix}-data-${count.index + 1}"
   profile        = "custom"
   zone           = "${var.vpc_region}-1"
@@ -116,7 +116,7 @@ resource "ibm_is_instance" "vpc_vsi" {
     security_groups = [ibm_is_security_group.sg.id]
   }
 
-  volumes = var.byok_data_volume == true ? [ibm_is_volume.vsi_data_volume[0].id] : []
+  volumes = tobool(var.byok_data_volume) == true ? [ibm_is_volume.vsi_data_volume[0].id] : []
 }
 
 resource "ibm_is_floating_ip" "vpc_vsi_fip" {
